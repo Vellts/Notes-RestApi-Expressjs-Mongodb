@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h5>Notas actuales:</h5>
+    <ul id="notas"></ul>
+    <button id="back">Regresar</button>
+
+    <script>
+        const back = document.getElementById('back');
+
+        back.addEventListener('click', async (e) => {
+            e.preventDefault();
+            window.location.href = 'http://localhost:5000/user.html'
+        })
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const notas = document.getElementById('notas');
+
+            const get_token = await fetch('api/v1/auth/get_token', {
+                method: 'GET',
+                credentials: 'include'
+            })
+
+            if(!get_token.ok) window.location.href = 'http://localhost:5000/index.html'
+            
+            const { data: { token } } = await get_token.json();
+
+
+            const res = await fetch('/api/v1/notes/get', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            const { data } = await res.json();
+            console.log(data)
+            if(res.ok) {
+                data.forEach(element => {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = `http://localhost:5000/nota.html?id=${element.id}`;
+                    a.textContent = "Ver nota";
+                    li.innerHTML = element.title;
+                    li.appendChild(a);
+                    notas.appendChild(li);
+                });
+            } else {
+                console.log(data)
+            }
+        })
+    </script>
+</body>
+</html>

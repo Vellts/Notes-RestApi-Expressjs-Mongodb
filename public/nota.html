@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!--
+        get the id from the url and save it in a variable
+        then fetch the note with that id
+        then display the note
+    -->
+    <h1>Nota</h1>
+    <h3 id="title"></h3>
+    <p id="content"></p>
+    <button id="back">Regresar</button>
+
+    <script>
+        // get the id from the url
+        const urlParams = new URLSearchParams(window.location.search);
+        const id_note = urlParams.get('id');
+
+        // get the back button
+
+        const back = document.getElementById('back');
+        back.addEventListener('click', async (e) => {
+            e.preventDefault();
+            window.location.href = 'http://localhost:5000/ver_notas.html'
+        })
+
+        // get the title and content elements
+
+        const title = document.getElementById('title');
+        const content = document.getElementById('content');
+
+        // fetch the note with the id
+        
+        document.addEventListener('DOMContentLoaded', async(e) => {
+            const get_token = await fetch('api/v1/auth/get_token', {
+                method: 'GET',
+                credentials: 'include'
+            })
+
+            const { data: { token } } = await get_token.json();
+
+            if(!token) window.location.href = 'http://localhost:5000/index.html'
+
+            const get_note = await fetch(`api/v1/notes/get/${id_note}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            if(!get_note.ok) window.location.href = 'http://localhost:5000/ver_notas.html'
+
+            const { data } = await get_note.json();
+            
+            title.textContent = data.title;
+            content.textContent = data.content;
+        })
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear notas</title>
+</head>
+<body>
+    <button id="crear_notas">Crear notas</button>
+    <button id="ver_notas">Ver notas</button>
+    <button id="logout">Cerrar sesión</button>
+
+    <script>
+        const crear_notas = document.getElementById('crear_notas');
+        const ver_notas = document.getElementById('ver_notas');
+
+        crear_notas.addEventListener('click', async (e) => {
+            e.preventDefault();
+            window.location.href = 'http://localhost:5000/crear_notas.html'
+        });
+
+        ver_notas.addEventListener('click', async (e) => {
+            e.preventDefault();
+            window.location.href = 'http://localhost:5000/ver_notas.html'
+        });
+
+        logout.addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            const log_out = await fetch('api/v1/auth/logout')
+
+            if(!log_out.ok) {
+                console.log('Error al cerrar sesión')
+            } else {
+                window.location.href = 'http://localhost:5000/index.html'
+            }
+        });
+    </script>
+</body>
+</html>

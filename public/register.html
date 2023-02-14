@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrarse</title>
+</head>
+<body>
+    <form id="form">
+        <input type="text" value = "" id="username" placeholder="sername">
+        <input type="email" value = "" id="email" placeholder="Correo">
+        <input type="password" value="" id="password" placeholder="Contraseña">
+        <input type="password" value="" id="repassword" placeholder="Reontraseña">
+        <button type="submit">Registrarse</button>
+    </form>
+
+    <script>
+        const form = document.getElementById('form');
+        const username = document.getElementById('username');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const repassword = document.getElementById('repassword');
+
+        console.log(username, email, password, repassword)
+
+        form.addEventListener('submit', async(e) => {
+            e.preventDefault()
+
+            const register = await fetch('api/v1/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username.value,
+                    email: email.value,
+                    password: password.value,
+                    repassword: repassword.value
+                })
+            })
+
+            const data = await register.json();
+            if(register.ok) {
+                window.location.href = 'http://localhost:5000/index.html'
+            } else {
+                console.log(data)
+                alert("Usuario o contraseña incorrectos")
+            }   
+        })
+    </script>
+</body>
+</html>

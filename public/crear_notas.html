@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear notas</title>
+</head>
+<body>
+    <form id="form">
+        <input type="text" id="title" placeholder="Titulo">
+        <input type="text" id="content" placeholder="Descripción">
+        <button type="submit" id="crear">Crear</button>
+        <button id="back">Regresar</button>
+    </form>
+
+    <script>
+        const form = document.getElementById('form');
+        const title = document.getElementById('title');
+        const content = document.getElementById('content');
+        const back = document.getElementById('back');
+
+        back.addEventListener('click', async (e) => {
+            e.preventDefault();
+            window.location.href = 'http://localhost:5000/user.html'
+        })
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const get_token = await fetch('api/v1/auth/get_token', {
+                method: 'GET',
+                credentials: 'include'
+            })
+
+            if(!get_token.ok) window.location.href = 'http://localhost:5000/index.html'
+
+            const { data: { token } } = await get_token.json();
+
+
+            const create_note = await fetch('api/v1/notes/new', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: title.value,
+                    content: content.value
+                })
+            })
+
+            const data = await create_note.json();
+            if(create_note.ok) {
+                window.location.href = 'http://localhost:5000/ver_notas.html'
+            } else {
+                alert("No se ha podido crear la nota")
+            }
+        })
+    </script>
+</body>
+</html>
